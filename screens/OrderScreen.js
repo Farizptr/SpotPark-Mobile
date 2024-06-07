@@ -91,7 +91,7 @@ export default function OrderScreen() {
         console.error("Error reading data from Firebase:", error);
       });
 
-    const objectDetectedRef = ref(database, "DHT11/ObjectDetected");
+    const objectDetectedRef = ref(database, "Object/ObjectDetected");
     const unsubscribeObjectDetected = onValue(objectDetectedRef, (snapshot) => {
       const data = snapshot.val();
       setObjectDetected(data);
@@ -141,16 +141,19 @@ export default function OrderScreen() {
       />
       <View style={styles.content}>
         <View style={styles.boxContainer}>
-          {boxes.map((box) => (
+          {boxes.map((box, index) => (
             <TouchableOpacity
               key={box}
               style={[
                 styles.box,
-                reservedBoxes.includes(box)
-                  ? styles.reservedBox
+                objectDetected && reservedBoxes.includes(box) && index === 0
+                  ? styles.spotparkRed
+                  : reservedBoxes.includes(box)
+                  ? styles.yellow
                   : selectedBox === box
-                  ? styles.selectedBox
-                  : styles.availableBox,
+                  ? styles.yellow
+                  : styles.white,
+                index % 2 === 0 ? styles.borderRight : styles.borderLeft,
               ]}
               onPress={() => handleBoxClick(box)}
             >
@@ -174,6 +177,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
+  },
+  spotparkRed: {
+    backgroundColor: 'red', // replace with your color
+  },
+  yellow: {
+    backgroundColor: 'rgba(250, 204, 21,1)', // replace with your color
+  },
+  white: {
+    backgroundColor: 'white',
   },
   modalContainer: {
     flex: 1,
@@ -208,7 +220,6 @@ const styles = StyleSheet.create({
   box: {
     width: "45%",
     padding: 30,
-    borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -240,5 +251,15 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  borderRight: {
+    borderRightWidth: 1,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+  },
+  borderLeft: {
+    borderLeftWidth: 1,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
   },
 });
